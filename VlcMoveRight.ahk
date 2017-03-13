@@ -1,12 +1,12 @@
 ;;--- Head --- Informations --- AHK ---
 
-;;	VLC reset position VLC x64 only. Reset position of VLC and/or start if not.
+;;	Move VLC to (right) other monitor.
 ;;	Compatibility: Windows
 ;;	All files must be in same folder. Where you want.
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
 
-	SetEnv, title, VLC reset position
-	SetEnv, mode, VLC reset position
+	SetEnv, title, VLC Move Right
+	SetEnv, mode, VLC Move Right
 	SetEnv, version, Version 2017-03-13
 	SetEnv, Author, LostByteSoft
 
@@ -16,6 +16,7 @@
 	#SingleInstance Force
 	SetTitleMatchMode, 2
 	SysGet, Mon1, Monitor, 1
+	SysGet, Mon2, Monitor, 2
 
 ;;--- Tray options
 
@@ -33,31 +34,24 @@ IfWinNotExist, Lecteur multimédia VLC,, goto, start
 
 start:
 	IfExist, C:\Program Files\VideoLAN\VLC\Vlc.exe
-	{
 		run, C:\Program Files\VideoLAN\VLC\Vlc.exe
-	}
 
-		else
-	{
-		MsgBox, VLC x64 not installed.
-		goto, GuiClose
-	}
+IfExist, C:\Program Files (x86)\VideoLAN\VLC\Vlc.exe
+		run, C:\Program Files (x86)\VideoLAN\VLC\Vlc.exe
 
-move:
-	WinWait, VLC
-	WinActivate, VLC
-	;;MsgBox, Ecran 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%....
+	WinWait, Lecteur multimédia VLC
+
+	move:
+	; Var1 -= Var2
 	SetEnv, Var1, %Mon1Right%
-	Var1 /= 4
-	SetEnv, Var2, %Var1%
-	Var2 *= 2
-	SetEnv, Var3, %Mon1Bottom%
-	Var3 /= 4
-	SetEnv, Var4, %Var3%
-	Var4 *= 2
-	;;MsgBox, %var1% %var2% %var3% %var4%
-	WinMove, Lecteur multimédia VLC, , %var1%, %var3%, %var2%, %var4%
-	ExitApp
+	SetEnv, Var2, %Mon2Right%
+	var2 -= var1
+	WinActivate, Lecteur multimédia VLC
+	; MsgBox, Ecran 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%....Ecran 2 %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%....
+	;MsgBox, Move to : %Mon2Left% - 0 - %var2% - %Mon2Bottom% - need mon1right-mon2right
+	WinShow, Lecteur multimédia VLC
+	WinMove, Lecteur multimédia VLC, , %Mon2Left%, 0, %var2%, %Mon2Bottom%
+	exitApp
 
 ;;--- Quit (escape , esc) ---
 
