@@ -7,7 +7,7 @@
 
 	SetEnv, title, VLC reset position
 	SetEnv, mode, VLC reset position
-	SetEnv, version, Version 2017-03-13
+	SetEnv, version, Version 2017-09-15-1923
 	SetEnv, Author, LostByteSoft
 
 ;;--- Softwares options ---
@@ -17,11 +17,14 @@
 	SetTitleMatchMode, 2
 	SysGet, Mon1, Monitor, 1
 
+	FileInstall, ico_VlcWinMove.ico, ico_VlcWinMove.ico, 0
+
 ;;--- Tray options
 
 	Menu, Tray, NoStandard
-	Menu, tray, add, Exit %title%, GuiClose		; GuiClose exit program
+	Menu, tray, add, Exit %title%, Close		; Close exit program
 	Menu, tray, add, Refresh, doReload		; Reload the script.
+	Menu, tray, add, Show logo, GuiLogo
 	Menu, tray, add, --------, about2		; empty space
 	Menu, tray, add, About - LostByteSoft, about	; Creates a new menu item.
 	Menu, tray, add, Version, version		; About version
@@ -35,12 +38,13 @@ start:
 	IfExist, C:\Program Files\VideoLAN\VLC\Vlc.exe
 	{
 		run, C:\Program Files\VideoLAN\VLC\Vlc.exe
+		Sleep, 1000
+		Goto, move
 	}
-
-		else
+	else
 	{
 		MsgBox, VLC x64 not installed.
-		goto, GuiClose
+		goto, Close
 	}
 
 move:
@@ -48,15 +52,16 @@ move:
 	WinActivate, VLC
 	;;MsgBox, Ecran 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%....
 	SetEnv, Var1, %Mon1Right%
-	Var1 /= 4
+	Var1 /= 12
 	SetEnv, Var2, %Var1%
-	Var2 *= 2
+	Var2 *= 10
 	SetEnv, Var3, %Mon1Bottom%
-	Var3 /= 4
+	Var3 /= 8
 	SetEnv, Var4, %Var3%
-	Var4 *= 2
+	Var4 *= 6
 	;;MsgBox, %var1% %var2% %var3% %var4%
 	WinMove, Lecteur multimédia VLC, , %var1%, %var3%, %var2%, %var4%
+	WinActivate, Lecteur multimédia VLC
 	ExitApp
 
 ;;--- Quit (escape , esc) ---
@@ -64,7 +69,7 @@ move:
 Escape::
 	ExitApp
 
-GuiClose:
+Close:
 	ExitApp
 
 ;;--- Tray Bar (must be at end of file) ---
@@ -82,6 +87,12 @@ doReload:
 	Reload
 	Return
 
+GuiLogo:
+	Gui, Add, Picture, x25 y25 w400 h400 , ico_wheel.ico
+	Gui, Show, w450 h450, %title% Logo
+	Gui, Color, 000000
+	return
+
 ;;--- End of script ---
 ;
 ;            DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
@@ -98,6 +109,9 @@ doReload:
 ;              You just DO WHAT THE FUCK YOU WANT TO.
 ;
 ;		     NO FUCKING WARRANTY AT ALL
+;
+;      The warranty is included in your anus. Look carefully you
+;             might miss all theses small characters.
 ;
 ;	As is customary and in compliance with current global and
 ;	interplanetary regulations, the author of these pages disclaims

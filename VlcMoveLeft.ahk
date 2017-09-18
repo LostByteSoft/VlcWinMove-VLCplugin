@@ -7,7 +7,7 @@
 
 	SetEnv, title, VLC Move Right
 	SetEnv, mode, VLC Move Right
-	SetEnv, version, Version 2017-08-06-2221
+	SetEnv, version, Version 2017-09-15-1919
 	SetEnv, Author, LostByteSoft
 
 ;;--- Softwares options ---
@@ -51,14 +51,14 @@ move:
 	IfEqual, MonitorCount, 1, Goto, JustMove
 
 	; Var1 -= Var2
-	SetEnv, Var1, %Mon1Right%
-	SetEnv, Var2, %Mon2Right%
+	SetEnv, Var1, %Mon1Left%
+	SetEnv, Var2, %Mon2Left%
 	var2 -= var1
 	WinActivate, Lecteur multimédia VLC
 	; MsgBox, Ecran 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%....Ecran 2 %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%....
 	;MsgBox, Move to : %Mon2Left% - 0 - %var2% - %Mon2Bottom% - need mon1right-mon2right
 	WinShow, Lecteur multimédia VLC
-	WinMove, Lecteur multimédia VLC, , %Mon2Left%, 0, %var2%, %Mon2Bottom%
+	WinMove, Lecteur multimédia VLC, , %Mon2Right%, 0, %var2%, %Mon2Bottom%
 	exitApp
 
 JustMove:
