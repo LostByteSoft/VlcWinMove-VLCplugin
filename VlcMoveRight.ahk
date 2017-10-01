@@ -5,16 +5,17 @@
 ;;	All files must be in same folder. Where you want.
 ;;	64 bit AHK version : 1.1.24.2 64 bit Unicode
 
+;;--- Softwares options ---
+
 	SetEnv, title, VLC Move Right
 	SetEnv, mode, VLC Move Right
-	SetEnv, version, Version 2017-08-06-2221
+	SetEnv, version, Version 2017-09-27-1154
 	SetEnv, Author, LostByteSoft
-
-;;--- Softwares options ---
 
 	SetWorkingDir, %A_ScriptDir%
 	#SingleInstance Force
 	SetTitleMatchMode, 2
+	SysGet, MonitorCount, MonitorCount
 	SysGet, Mon1, Monitor, 1
 	SysGet, Mon2, Monitor, 2
 
@@ -26,56 +27,53 @@
 	Menu, tray, add, Exit %title%, Close		; Close exit program
 	Menu, tray, add, Refresh, doReload		; Reload the script.
 	Menu, tray, add, Show logo, GuiLogo
-	Menu, tray, add, --------, about2		; empty space
+	Menu, tray, add, Secret MsgBox, secret		; Secret MsgBox, just show all options and variables of the program
+	Menu, tray, add,
 	Menu, tray, add, About - LostByteSoft, about	; Creates a new menu item.
 	Menu, tray, add, Version, version		; About version
 
 ;;--- Software start here ---
-
-	SysGet, MonitorCount, MonitorCount
 
 IfWinExist, Lecteur multimédia VLC,, goto, move
 	goto, start
 
 start:
 	IfExist, C:\Program Files\VideoLAN\VLC\Vlc.exe
-		run, C:\Program Files\VideoLAN\VLC\Vlc.exe
+	run, C:\Program Files\VideoLAN\VLC\Vlc.exe
 
 IfExist, C:\Program Files (x86)\VideoLAN\VLC\Vlc.exe
-		run, C:\Program Files (x86)\VideoLAN\VLC\Vlc.exe
+	run, C:\Program Files (x86)\VideoLAN\VLC\Vlc.exe
 
 	WinWait, Lecteur multimédia VLC
 	WinActivate, Lecteur multimédia VLC
 
 move:
 	IfEqual, MonitorCount, 1, Goto, JustMove
-
-	; Var1 -= Var2
-	SetEnv, Var1, %Mon1Right%
-	SetEnv, Var2, %Mon2Right%
-	var2 -= var1
+	SetEnv, Mon2Left1, %Mon2Left%
+	IfLess, Mon2Left1, -1, goto, negative
+	goto, adjust
+	negative:
+	Mon2Left1 *= -1
+	adjust:
 	WinActivate, Lecteur multimédia VLC
-	; MsgBox, Ecran 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%....Ecran 2 %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%....
-	;MsgBox, Move to : %Mon2Left% - 0 - %var2% - %Mon2Bottom% - need mon1right-mon2right
 	WinShow, Lecteur multimédia VLC
-	WinMove, Lecteur multimédia VLC, , %Mon2Left%, 0, %var2%, %Mon2Bottom%
-	exitApp
+	WinMove, Lecteur multimédia VLC, , %Mon2Left%, 0, %Mon2Left1%, %mon2bottom%
+	goto, close
+
 
 JustMove:
 	WinWait, Lecteur multimédia VLC
 	WinActivate, Lecteur multimédia VLC
-	;;MsgBox, Ecran 1 Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%....
 	SetEnv, Var1, %Mon1Right%
-	Var1 /= 4
+	Var1 /= 12
 	SetEnv, Var2, %Var1%
-	Var2 *= 2
+	Var2 *= 10
 	SetEnv, Var3, %Mon1Bottom%
-	Var3 /= 4
+	Var3 /= 8
 	SetEnv, Var4, %Var3%
-	Var4 *= 2
-	;;MsgBox, %var1% %var2% %var3% %var4%
+	Var4 *= 6
 	WinMove, Lecteur multimédia VLC, , %var1%, %var3%, %var2%, %var4%
-	ExitApp
+	goto, close
 
 ;;--- Quit (escape , esc) ---
 
@@ -83,6 +81,7 @@ Escape::
 	ExitApp
 
 Close:
+	sleep, 3000
 	ExitApp
 
 ;;--- Tray Bar (must be at end of file) ---
@@ -104,6 +103,22 @@ GuiLogo:
 	Gui, Add, Picture, x25 y25 w400 h400 , ico_VlcMoveRight.ico
 	Gui, Show, w450 h450, %title% Logo
 	Gui, Color, 000000
+	return
+
+secret:
+	SetEnv, Mon2Left1, %Mon2Left%
+	IfLess, Mon2Left1, -1, goto, negative1
+	negative1:
+	Mon2Left1 *= -1
+	SetEnv, Var1, %Mon1Right%
+	Var1 /= 12
+	SetEnv, Var2, %Var1%
+	Var2 *= 10
+	SetEnv, Var3, %Mon1Bottom%
+	Var3 /= 8
+	SetEnv, Var4, %Var3%
+	Var4 *= 6
+	MsgBox, Ecran 1 = Left: %Mon1Left% -- Top: %Mon1Top% -- Right: %Mon1Right% -- Bottom %Mon1Bottom%....Ecran 2 = Left: %Mon2Left% -- Top: %Mon2Top% -- Right: %Mon2Right% -- Bottom %Mon2Bottom%.... ---===---  Move to : %Mon2Left% 0 %Mon2Left1% %mon2bottom% ---===--- Just move : %var1% %var2% %var3% %var4%
 	return
 
 ;;--- End of script ---
