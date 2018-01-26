@@ -9,25 +9,45 @@
 
 	SetEnv, title, VLC reset position
 	SetEnv, mode, VLC reset position
-	SetEnv, version, Version 2017-09-15-1923
+	SetEnv, version, Version 2018-01-26-0730
 	SetEnv, Author, LostByteSoft
+	SetEnv, icofolder, C:\Program Files\Common Files
+	SetEnv, debug, 0
+	SetEnv, logoicon, ico_VlcWinMove.ico
 
 	SetWorkingDir, %A_ScriptDir%
 	SetTitleMatchMode, 2
 	SysGet, Mon1, Monitor, 1
 
-	FileInstall, ico_VlcWinMove.ico, ico_VlcWinMove.ico, 0
+	FileInstall, ico_VlcWinMove.ico, %icofolder%\ico_VlcWinMove.ico, 0
 
-;;--- Tray options
+;;--- Menu Tray options ---
 
 	Menu, Tray, NoStandard
-	Menu, tray, add, Exit %title%, Close		; Close exit program
-	Menu, tray, add, Refresh, doReload		; Reload the script.
+	Menu, tray, add, ---=== %title% ===---, about
+	Menu, Tray, Icon, ---=== %title% ===---, %icofolder%\%logoicon%
 	Menu, tray, add, Show logo, GuiLogo
-	Menu, tray, add, Secret MsgBox, secret		; Secret MsgBox, just show all options and variables of the program
+	Menu, tray, add, Secret MsgBox, secret					; Secret MsgBox, just show all options and variables of the program
+	Menu, Tray, Icon, Secret MsgBox, %icofolder%\ico_lock.ico
+	Menu, tray, add, About && ReadMe, author
+	Menu, Tray, Icon, About && ReadMe, %icofolder%\ico_about.ico
+	Menu, tray, add, Author %author%, about
+	menu, tray, disable, Author %author%
+	Menu, tray, add, %version%, about
+	menu, tray, disable, %version%
 	Menu, tray, add,
-	Menu, tray, add, About - LostByteSoft, about	; Creates a new menu item.
-	Menu, tray, add, Version, version		; About version
+	Menu, tray, add, --== Control ==--, about
+	Menu, Tray, Icon, --== Control ==--, %icofolder%\ico_options.ico
+	Menu, tray, add, Exit %title%, ExitApp					; Close exit program
+	Menu, Tray, Icon, Exit %title%, %icofolder%\ico_shut.ico
+	Menu, tray, add, Refresh (ini mod), doReload 				; Reload the script.
+	Menu, Tray, Icon, Refresh (ini mod), %icofolder%\ico_reboot.ico
+	Menu, tray, add, Set Debug (Toggle), debug
+	Menu, Tray, Icon, Set Debug (Toggle), %icofolder%\ico_debug.ico
+	Menu, tray, add, Pause (Toggle), pause
+	Menu, Tray, Icon, Pause (Toggle), %icofolder%\ico_pause.ico
+	menu, tray, add
+	Menu, Tray, Tip, %mode%
 
 ;;--- Software start here ---
 
@@ -63,16 +83,56 @@ move:
 	WinActivate, Lecteur multimédia VLC
 	Goto, close
 
+;;--- Debug Pause ---
+
+debug:
+	IfEqual, debug, 0, goto, debug1
+	IfEqual, debug, 1, goto, debug0
+
+	debug0:
+	SetEnv, debug, 0
+	TrayTip, %title%, Deactivated ! debug=%debug%, 1, 2
+	Goto, sleep2
+
+	debug1:
+	SetEnv, debug, 1
+	TrayTip, %title%, Activated ! debug=%debug%, 1, 2
+	Goto, sleep2
+
+pause:
+	Ifequal, pause, 0, goto, paused
+	Ifequal, pause, 1, goto, unpaused
+
+	paused:
+	SetEnv, pause, 1
+	goto, sleep
+
+	unpaused:	
+	Menu, Tray, Icon, %logoicon%
+	SetEnv, pause, 0
+	Goto, start
+
+	sleep:
+	Menu, Tray, Icon, %icofolder%\ico_pause.ico
+	sleep2:
+	sleep, 500000
+	goto, sleep2
+
 ;;--- Quit (escape , esc) ---
 
 Escape::
+ExitApp:
 	ExitApp
 
 Close:
-	sleep, 3000
+	sleep, 5000
 	ExitApp
 
 ;;--- Tray Bar (must be at end of file) ---
+
+author:
+	MsgBox, 64, %title%, %title% %mode% %version% %author% This software is usefull to.............. (Game fill the ....).`n`n`tGo to https://github.com/LostByteSoft
+	Return
 
 about:
 about2:
@@ -88,7 +148,7 @@ doReload:
 	Return
 
 GuiLogo:
-	Gui, Add, Picture, x25 y25 w400 h400 , ico_wheel.ico
+	Gui, Add, Picture, x25 y25 w400 h400 , %icofolder%\%logoicon%
 	Gui, Show, w450 h450, %title% Logo
 	Gui, Color, 000000
 	return
